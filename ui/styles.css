@@ -1671,3 +1671,110 @@ body {
 .cta-primary .cta-ico svg { width: 34px; height: 17px; }
 .cta-ghost .cta-ico svg { width: 18px; height: 18px; }
 .cta-arrow { margin-left: 2px; font-size: 19px; font-weight: 700; }
+
+/* =========================================================================
+   ILLUSTRATED MAP (hand-drawn, gentle ambient motion only)
+   ========================================================================= */
+.draw-map {
+  position: relative; width: 100%; aspect-ratio: 1 / 1.04;
+  border: 3px solid var(--ink); border-radius: 20px; overflow: hidden;
+  box-shadow: 5px 6px 0 var(--ink); background: #d8e3bc;
+}
+.dm-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.dm-clouds { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.dm-cloud {
+  position: absolute; border-radius: 999px;
+  background: rgba(255,255,255,.6); filter: blur(2px);
+}
+.dm-cloud.c1 { width: 80px; height: 22px; top: 14%; left: -90px; animation: cloudDrift 26s linear infinite; }
+.dm-cloud.c2 { width: 56px; height: 16px; top: 30%; left: -70px; animation: cloudDrift 34s linear infinite 6s; }
+.dm-cloud.c3 { width: 64px; height: 18px; top: 8%;  left: -80px; animation: cloudDrift 30s linear infinite 14s; }
+@keyframes cloudDrift { from { transform: translateX(0); } to { transform: translateX(560px); } }
+
+.dm-pins { position: absolute; inset: 0; }
+.dpin {
+  position: absolute; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: none; border: none; cursor: pointer; padding: 4px;
+  animation: pinBob 3.6s ease-in-out infinite var(--d, 0s);
+}
+@keyframes pinBob { 0%,100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, calc(-50% - 5px)); } }
+.dpin:active { filter: brightness(.96); }
+.dpin-dot { position: relative; display: grid; place-items: center; }
+.dpin-label {
+  font-family: var(--hand); font-size: 12px; font-weight: 600; color: var(--ink);
+  background: rgba(250,246,238,.82); border: 1.5px solid var(--ink);
+  border-radius: 7px; padding: 1px 7px; white-space: nowrap;
+  box-shadow: 1.5px 2px 0 rgba(42,28,16,.3);
+}
+
+/* capsule (memory) pin — glowing gold canister */
+.dpin.cap .dpin-dot { filter: drop-shadow(0 3px 5px rgba(0,0,0,.4)) drop-shadow(0 0 9px rgba(232,193,136,.95)); }
+.dpin.cap .dpin-dot::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 56px; height: 26px;
+  transform: translate(-50%,-50%); border: 2px solid rgba(212,170,58,.55);
+  border-radius: 999px; animation: pinRing 2.6s ease-out infinite;
+}
+@keyframes pinRing { 0% { transform: translate(-50%,-50%) scale(.7); opacity: .8; } 100% { transform: translate(-50%,-50%) scale(1.5); opacity: 0; } }
+.dpin.cap.sealed .dpin-dot { filter: drop-shadow(0 2px 4px rgba(0,0,0,.35)) saturate(.9); }
+.dpin-lock {
+  position: absolute; top: -8px; right: -8px; width: 18px; height: 18px; border-radius: 50%;
+  background: #faf6ee; border: 2px solid var(--ink); display: grid; place-items: center; color: var(--gold);
+}
+.dpin-lock svg { width: 10px; height: 10px; }
+
+/* locked / faded pin */
+.dpin.fog .dpin-dot, .dpin.empty .dpin-dot {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 2px dashed var(--stroke); background: rgba(250,246,238,.5);
+}
+.dpin.empty .dpin-dot { border-color: var(--gold); }
+.dpin-q { font-family: var(--serif); font-size: 18px; color: var(--ink-soft); }
+.dpin-plus { font-family: var(--serif); font-size: 22px; color: var(--gold); line-height: 1; }
+
+/* highlighted by a principle trace */
+.dpin.lit .dpin-dot { filter: drop-shadow(0 0 12px rgba(232,193,136,1)); }
+.dpin.lit .dpin-label { background: var(--gold-light); }
+
+/* progress label, not the vibecoded mono */
+.map-progress { font-family: var(--hand) !important; font-size: 14px !important; color: var(--ink-mid) !important; letter-spacing: 0 !important; text-transform: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dm-cloud, .dpin, .dpin.cap .dpin-dot::after { animation: none; }
+}
+
+/* =========================================================================
+   React Bits-style effects (ported to vanilla)
+   ========================================================================= */
+/* Click Spark */
+.spark {
+  position: fixed; width: 6px; height: 6px; border-radius: 2px;
+  background: var(--gold); pointer-events: none; z-index: 9999;
+  transform: translate(-50%, -50%);
+  animation: sparkFly .5s ease-out forwards;
+}
+@keyframes sparkFly {
+  to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
+}
+
+/* Split Text reveal on the home headline */
+.home-headline .word {
+  display: inline-block; opacity: 0; transform: translateY(16px) rotate(2deg);
+  animation: wordIn .6s var(--bounce) forwards;
+  animation-delay: calc(var(--i) * .07s + .12s);
+}
+@keyframes wordIn { to { opacity: 1; transform: none; } }
+
+/* Shiny sweep on the primary CTA */
+.cta-primary { position: relative; overflow: hidden; }
+.cta-primary::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.55) 50%, transparent 62%);
+  transform: translateX(-130%); animation: ctaShine 3.6s ease-in-out infinite 1s;
+}
+@keyframes ctaShine { 0%,55% { transform: translateX(-130%); } 78%,100% { transform: translateX(130%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .home-headline .word { opacity: 1; transform: none; animation: none; }
+  .cta-primary::after { animation: none; display: none; }
+}

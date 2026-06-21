@@ -1,4 +1,3 @@
-window.addEventListener("error",function(e){if(!/ERR:/.test(document.title))document.title="ERR: "+(e.message)+" @"+(e.lineno);});
 /* RETURN, frontend controller.
  * Loop: HOME → DISCOVER → (dig old: places / drop new: camera → drag → create)
  *        HOME → MAP → open capsule → reconstruct → reveal → talk to past you
@@ -126,7 +125,7 @@ function show(name) {
   document.querySelectorAll(".tab").forEach((t) =>
     t.classList.toggle("active", TAB_FOR_VIEW[name] === t.dataset.tab));
   document.querySelector(".screen").scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
-  if (name === 'map' && map) setTimeout(() => map.resize(), 60);
+  if (name === 'map') renderMap();
 }
 const switchTab = (tab) => show(tab === "capsules" ? "places" : tab);
 
@@ -142,121 +141,60 @@ function toast(msg) {
   toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
 }
 
-// --- 1. SATELLITE MAP (MapLibre + globe frame) ---
-const MAP_CENTER = [-122.2588, 37.8698];
-const MAP_ZOOM = 15.4;
-let map = null, markerObjs = [], idleTimer = null, idleAnim = null;
+// --- 1. ILLUSTRATED MAP (hand-drawn, no library, no auto-movement) ---
+let map = null;          // kept null so legacy `if (map)` guards are harmless
+function stopSpin() {}   // no-op (no more auto-drift)
 
-function ensureMap() {
-  if (map || typeof maplibregl === 'undefined') return;
-  map = new maplibregl.Map({
-    container: 'map',
-    attributionControl: false,
-    center: MAP_CENTER, zoom: MAP_ZOOM, pitch: 0, bearing: 0,
-    style: {
-      version: 8,
-      sources: {
-        sat: {
-          type: 'raster', tileSize: 256,
-          tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
-          attribution: 'Imagery © Esri',
-        },
-      },
-      layers: [{ id: 'sat', type: 'raster', source: 'sat' }],
-    },
-  });
-  map.addControl(new maplibregl.AttributionControl({ compact: true }));
-  map.on('load', () => { drawMarkers(); map.resize(); document.getElementById('map').classList.add('ready'); });
-  map.on('dragstart', stopIdleDrift);
-  map.on('dragend', scheduleIdleDrift);
+// place pins by % from real lat/lng, framed with padding so nothing clips
+function mapXY(poi) {
+  const pts = SEED.map.filter((m) => m.lat != null);
+  const la = pts.map((p) => p.lat), ln = pts.map((p) => p.lng);
+  const laMin = Math.min(...la), laMax = Math.max(...la), lnMin = Math.min(...ln), lnMax = Math.max(...ln);
+  return {
+    x: 24 + ((poi.lng - lnMin) / ((lnMax - lnMin) || 1)) * 52,
+    y: 18 + ((laMax - poi.lat) / ((laMax - laMin) || 1)) * 60,
+  };
 }
 
-function scheduleIdleDrift() {
-  clearTimeout(idleTimer);
-  cancelAnimationFrame(idleAnim);
-  idleTimer = setTimeout(() => {
-    if (!map) return;
-    let last = performance.now();
-    const tick = (now) => {
-      const dt = now - last; last = now;
-      if (map) {
-        const c = map.getCenter();
-        map.setCenter([c.lng + 0.000008 * dt, c.lat], { duration: 0 });
-      }
-      idleAnim = requestAnimationFrame(tick);
-    };
-    idleAnim = requestAnimationFrame(tick);
-  }, 5000);
+function capsuleSVG(locked) {
+  const fc = locked ? "#d8b24a" : "#f0d98a", ec = locked ? "#b88a28" : "#d4aa3a";
+  return `<svg viewBox="0 0 52 22" width="48" height="20" fill="none">
+    <rect x="4" y="3" width="44" height="16" rx="8" fill="${fc}" stroke="#2a1c08" stroke-width="2"/>
+    <ellipse cx="6" cy="11" rx="8" ry="10" fill="${ec}" stroke="#2a1c08" stroke-width="2"/>
+    <ellipse cx="46" cy="11" rx="8" ry="10" fill="${ec}" stroke="#2a1c08" stroke-width="2"/>
+    <rect x="21" y="2.5" width="3.5" height="17" rx="1.5" fill="#c49820" stroke="#2a1c08" stroke-width="1"/>
+    <rect x="28" y="2.5" width="3.5" height="17" rx="1.5" fill="#c49820" stroke="#2a1c08" stroke-width="1"/></svg>`;
 }
 
-function stopIdleDrift() {
-  clearTimeout(idleTimer);
-  cancelAnimationFrame(idleAnim);
-}
-
-function stopSpin() { stopIdleDrift(); }
-
-function drawMarkers() {
-  if (!map) return;
-  markerObjs.forEach(m => m.remove());
-  markerObjs = [];
+function renderMap() {
+  const wrap = document.getElementById("map-pins");
+  if (!wrap) return;
+  wrap.innerHTML = "";
   let found = 0;
-  SEED.map.forEach(poi => {
+  SEED.map.forEach((poi, i) => {
     const disc = isDiscovered(poi);
     if (disc) found++;
     const cap = poi.capsuleId ? getPlace(poi.capsuleId) : null;
     const locked = cap && isLocked(cap);
+    const { x, y } = mapXY(poi);
 
-    const wrap = document.createElement('div');
-    wrap.className = 'mk-pill-wrap' + (disc ? (cap ? (locked ? ' sealed' : '') : ' empty') : ' fog-mk') + (highlight.has(poi.id) ? ' highlight' : '');
+    const el = document.createElement("button");
+    el.className = "dpin" + (disc ? (cap ? (locked ? " cap sealed" : " cap") : " empty") : " fog") + (highlight.has(poi.id) ? " lit" : "");
+    el.style.left = x + "%";
+    el.style.top = y + "%";
+    el.style.setProperty("--d", (i * 0.4).toFixed(2) + "s");
 
-    if (!disc) {
-      wrap.innerHTML = `
-        <div class="mk-pill-inner">
-          <svg viewBox="0 0 36 26" width="36" height="26" fill="none">
-            <circle cx="18" cy="13" r="11" fill="rgba(154,120,96,.35)" stroke="#7a6050" stroke-width="1.5" stroke-dasharray="3 2"/>
-            <text x="18" y="18" text-anchor="middle" font-family="Caveat,cursive" font-size="14" fill="#9a7860" opacity=".8">?</text>
-          </svg>
-        </div>`;
-    } else if (cap) {
-      const fc = locked ? '#d4aa3a' : '#edd878';
-      const ec = locked ? '#b08020' : '#d4aa3a';
-      wrap.innerHTML = `
-        <div class="mk-pill-inner">
-          <div class="mk-ring"></div>
-          <svg viewBox="0 0 52 22" width="52" height="22" fill="none">
-            <rect x="4" y="3" width="44" height="16" rx="8" fill="${fc}" stroke="#2a1c08" stroke-width="1.8"/>
-            <ellipse cx="5" cy="11" rx="8" ry="10" fill="${ec}" stroke="#2a1c08" stroke-width="1.8"/>
-            <ellipse cx="47" cy="11" rx="8" ry="10" fill="${ec}" stroke="#2a1c08" stroke-width="1.8"/>
-            <rect x="21" y="2.5" width="4" height="17" rx="2" fill="#c49820" stroke="#2a1c08" stroke-width="1"/>
-            <rect x="27" y="2.5" width="4" height="17" rx="2" fill="#c49820" stroke="#2a1c08" stroke-width="1"/>
-          </svg>
-        </div>
-        <span class="mk-pill-label">${poi.name.split(' ').slice(0,2).join(' ')}</span>`;
-    } else {
-      wrap.innerHTML = `
-        <div class="mk-pill-inner">
-          <svg viewBox="0 0 32 32" width="32" height="32" fill="none">
-            <circle cx="16" cy="16" r="13" fill="rgba(200,144,42,.2)" stroke="#c8902a" stroke-width="1.5" stroke-dasharray="4 2"/>
-            <text x="16" y="21" text-anchor="middle" font-family="Caveat,cursive" font-size="18" fill="#c8902a">+</text>
-          </svg>
-        </div>
-        <span class="mk-pill-label">${poi.name.split(' ').slice(0,2).join(' ')}</span>`;
-    }
+    let art;
+    if (!disc) art = `<span class="dpin-q">?</span>`;
+    else if (cap) art = capsuleSVG(locked) + (locked ? `<span class="dpin-lock">${ICON.lock}</span>` : "");
+    else art = `<span class="dpin-plus">+</span>`;
+    el.innerHTML = `<span class="dpin-dot">${art}</span><span class="dpin-label">${poi.name}</span>`;
 
-    wrap.addEventListener('click', e => { e.stopPropagation(); onPoiClick(poi); });
-    const marker = new maplibregl.Marker({ element: wrap, anchor: 'bottom' })
-      .setLngLat([poi.lng, poi.lat])
-      .addTo(map);
-    markerObjs.push(marker);
+    el.addEventListener("click", (e) => { e.stopPropagation(); onPoiClick(poi); });
+    wrap.appendChild(el);
   });
-  const mp = document.getElementById('map-progress');
-  if (mp) mp.textContent = `${found} / ${SEED.map.length} discovered`;
-}
-
-function renderMap() {
-  ensureMap();
-  if (map && map.isStyleLoaded && map.isStyleLoaded()) drawMarkers();
+  const mp = document.getElementById("map-progress");
+  if (mp) mp.textContent = `${found} of ${SEED.map.length} found`;
 }
 
 function onPoiClick(poi) {
@@ -267,15 +205,10 @@ function onPoiClick(poi) {
 }
 
 function visit(poi) {
-  stopIdleDrift();
-  if (map) map.easeTo({ center: [poi.lng, poi.lat], zoom: 16.6, duration: 700, essential: true });
-  setTimeout(() => {
-    discovered.add(poi.id);
-    SoundFX.discover();
-    drawMarkers();
-    toast(poi.capsuleId ? `Back at ${poi.name}` : `Discovered ${poi.name}, seal a memory here`);
-    scheduleIdleDrift();
-  }, 1500);
+  discovered.add(poi.id);
+  SoundFX.discover();
+  renderMap();
+  toast(poi.capsuleId ? `Back at ${poi.name}` : `Discovered ${poi.name}, seal a memory here`);
 }
 
 // --- 2. CREATE a capsule ---
@@ -445,14 +378,12 @@ function tracePrinciple(cap) {
   highlight.clear();
   ids.forEach((id) => highlight.add(id));
   switchTab("map");
-  const target = SEED.map.find((p) => ids.includes(p.id));
-  if (map && target) map.easeTo({ center: [target.lng, target.lat], zoom: 16, duration: 700, essential: true });
-  drawMarkers();
+  renderMap();
   SoundFX.shimmer();
   const names = SEED.map.filter((p) => ids.includes(p.id)).map((p) => p.name).join(", ");
   toast(`This principle was formed at: ${names || cap.name}`);
   clearTimeout(highlightTimer);
-  highlightTimer = setTimeout(() => { highlight.clear(); drawMarkers(); }, 4500);
+  highlightTimer = setTimeout(() => { highlight.clear(); renderMap(); }, 4500);
 }
 
 // --- reconstruct-before-reveal (seeded memories) ---
@@ -895,3 +826,39 @@ if (location.search.includes("demo=venue")) { active = getPlace("venue"); reveal
 if (location.search.includes("demo=map")) { show("map"); renderMap(); }
 if (location.search.includes("demo=principles")) { show("graph"); renderGraph(); }
 if (location.search.includes("demo=places")) { show("places"); }
+
+// ===== React Bits-style effects, ported to vanilla =====
+
+// Click Spark — little sparks burst on every tap (reactbits.dev/animations/click-spark)
+document.addEventListener("pointerdown", (e) => {
+  if (reduceMotion) return;
+  const n = 8;
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement("span");
+    s.className = "spark";
+    const a = (Math.PI * 2 * i) / n, d = 16 + Math.random() * 16;
+    s.style.left = e.clientX + "px"; s.style.top = e.clientY + "px";
+    s.style.setProperty("--dx", (Math.cos(a) * d).toFixed(1) + "px");
+    s.style.setProperty("--dy", (Math.sin(a) * d).toFixed(1) + "px");
+    document.body.appendChild(s);
+    s.addEventListener("animationend", () => s.remove(), { once: true });
+  }
+}, true);
+
+// Split Text — reveal headline word by word (reactbits.dev/text-animations/split-text)
+function splitReveal(el) {
+  if (!el || el.dataset.split) return;
+  el.dataset.split = "1";
+  const frag = document.createDocumentFragment();
+  let idx = 0;
+  el.childNodes.forEach((node) => {
+    if (node.nodeType === 3) {
+      node.textContent.split(/(\s+)/).forEach((tok) => {
+        if (tok.trim() === "") frag.appendChild(document.createTextNode(tok));
+        else { const s = document.createElement("span"); s.className = "word"; s.textContent = tok; s.style.setProperty("--i", idx++); frag.appendChild(s); }
+      });
+    } else frag.appendChild(node.cloneNode(true));
+  });
+  el.innerHTML = ""; el.appendChild(frag);
+}
+splitReveal(document.querySelector(".home-headline"));
