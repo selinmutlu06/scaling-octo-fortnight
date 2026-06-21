@@ -1,5 +1,5 @@
 window.addEventListener("error",function(e){if(!/ERR:/.test(document.title))document.title="ERR: "+(e.message)+" @"+(e.lineno);});
-/* RETURN — frontend controller.
+/* RETURN, frontend controller.
  * Loop: HOME → DISCOVER → (dig old: places / drop new: camera → drag → create)
  *        HOME → MAP → open capsule → reconstruct → reveal → talk to past you
  *        MAP → compass → PRINCIPLES MAP
@@ -273,7 +273,7 @@ function visit(poi) {
     discovered.add(poi.id);
     SoundFX.discover();
     drawMarkers();
-    toast(poi.capsuleId ? `Back at ${poi.name}` : `Discovered ${poi.name} — seal a memory here`);
+    toast(poi.capsuleId ? `Back at ${poi.name}` : `Discovered ${poi.name}, seal a memory here`);
     scheduleIdleDrift();
   }, 1500);
 }
@@ -287,7 +287,7 @@ function startCreate(poi) {
   selFiles = [];
   document.getElementById("file-preview").innerHTML = "";
   document.getElementById("create-files").value = "";
-  document.getElementById("filedrop-label").textContent = "＋ add a photo or video — recall reads its EXIF location & time";
+  document.getElementById("filedrop-label").textContent = "＋ add a photo or video, recall reads its EXIF location & time";
   document.getElementById("create-loc-icon").innerHTML = ICON.pin;
   document.getElementById("create-place").textContent = poi.name;
   document.getElementById("mood-row").innerHTML = SEED.moods
@@ -331,7 +331,7 @@ document.getElementById("create-files").addEventListener("change", (e) => {
 
 document.getElementById("create-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const note = document.getElementById("create-note").value.trim() || "No words — just being here.";
+  const note = document.getElementById("create-note").value.trim() || "No words, just being here.";
   const id = "c" + Date.now();
   const media = selFiles.map((f) => f.type.startsWith("video")
     ? { type: "video", src: URL.createObjectURL(f) }
@@ -344,7 +344,7 @@ document.getElementById("create-form").addEventListener("submit", async (e) => {
     reflection: "When you open this, what will you want to remember about who you are today?",
     sealDate: "sealed just now",
     opener: "what were you hoping for when you sealed this?",
-    replies: [], fallback: "I sealed this moment for you — that's all I know yet.",
+    replies: [], fallback: "I sealed this moment for you, that's all I know yet.",
     anchor: { place: createPoi.name, time: "just now", photo: selCover },
     userCreated: true,
   };
@@ -359,12 +359,12 @@ document.getElementById("create-form").addEventListener("submit", async (e) => {
   if (Recall.on()) {
     toast(`Sealing to recall…`);
     const files = [...selFiles];
-    if (note && note !== "No words — just being here.") {
+    if (note && note !== "No words, just being here.") {
       files.push(new File([note], "note.txt", { type: "text/plain" }));
     }
     try {
       await Recall.createCapsule({ place_name: createPoi.name, lat: createPoi.lat, lng: createPoi.lng, files });
-      toast(`Sealed at ${cap.name} — ingested by recall.`);
+      toast(`Sealed at ${cap.name}, ingested by recall.`);
     } catch {
       toast(`Sealed locally (recall unreachable).`);
     }
@@ -383,7 +383,7 @@ function renderPlaces() {
     el.className = "place";
     el.tabIndex = 0;
     el.setAttribute("role", "button");
-    el.setAttribute("aria-label", locked ? `Sealed capsule at ${p.name} — return to open` : `Open capsule at ${p.name}`);
+    el.setAttribute("aria-label", locked ? `Sealed capsule at ${p.name}, return to open` : `Open capsule at ${p.name}`);
     el.innerHTML = `
       <div class="place-cover" style="background:${p.cover}"></div>
       <div class="place-scrim"></div>
@@ -670,7 +670,7 @@ function onGraphNode(n) {
   SoundFX.shimmer();
   renderGraph();
   document.getElementById("graph-info").textContent = graphFocus
-    ? `"${n.text}" — tap a lit memory to open it.`
+    ? `"${n.text}", tap a lit memory to open it.`
     : "Tap a principle to see the moments behind it. Tap a memory to open it.";
 }
 document.getElementById("graph").addEventListener("click", () => {

@@ -1,4 +1,4 @@
-/* recapsule — seeded demo data, grounded in REAL photo GPS + timestamps.
+/* recapsule · seeded demo data, grounded in REAL photo GPS + timestamps.
  *
  * Every capsule below sits at the actual coordinates its photo was taken at
  * (read from EXIF), on the real Cal Hacks timeline (Sat Jun 20, 2026, Berkeley
@@ -29,13 +29,13 @@ const SEED = {
       visits: "8:15 AM · where you woke up",
       sealed: true,
       mood: { label: "quiet, bracing", hue: 32 },
-      music: "Clairo — Bags",
+      music: "Clairo · Bags",
       media: [{ type: "photo", src: "photos/img_2298.jpg" }],
       cover: "center/cover url('photos/img_2298.jpg')",
       anchor: { place: "Durant Ave · Southside", time: "Sat Jun 20, 2026 · 8:15 AM", photo: "center/cover url('photos/img_2298.jpg')" },
       cues: [
         { type: "photo · EXIF", text: "Curtains half-open, bed unmade. GPS: 37.8678, -122.2562.", time: "08:15 AM" },
-        { type: "spotify", text: "low volume: Clairo — “Bags” (calm, sad-valence)", time: "08:12 AM" },
+        { type: "spotify", text: "low volume: Clairo · “Bags” (calm, sad-valence)", time: "08:12 AM" },
         { type: "imessage · team", text: "“we actually doing this 😅”", time: "08:05 AM" },
       ],
       storyline:
@@ -46,7 +46,7 @@ const SEED = {
       ],
       principle: "I show up before I feel ready.",
       sealDate: "sealed Jun 20, 2026 · 8:15 AM",
-      opener: "be honest — did you think we could pull it off?",
+      opener: "be honest, did you think we could pull it off?",
       replies: [
         { match: ["ready", "scared", "nervous"], text: "Not even close to ready. I said yes anyway and figured the readiness would catch up." },
         { match: ["sleep", "tired"], text: "Barely slept. The room was too quiet and my head was too loud." },
@@ -63,17 +63,17 @@ const SEED = {
       visits: "8:53 AM · before the doors",
       sealed: false,
       mood: { label: "caffeine optimism", hue: 45 },
-      music: "Still Woozy — Goodie Bag",
+      music: "Still Woozy · Goodie Bag",
       media: [{ type: "photo", src: "photos/img_2303.jpg" }],
       cover: "center/cover url('photos/img_2303.jpg')",
       anchor: { place: "Telegraph Ave · Southside", time: "Sat Jun 20, 2026 · 8:53 AM", photo: "center/cover url('photos/img_2303.jpg')" },
       cues: [
         { type: "photo · EXIF", text: "Empty Telegraph, fog not burned off yet. 37.8679, -122.2590.", time: "08:53 AM" },
-        { type: "spotify", text: "playing: Still Woozy — “Goodie Bag” (bright, mid-arousal)", time: "08:55 AM" },
+        { type: "spotify", text: "playing: Still Woozy · “Goodie Bag” (bright, mid-arousal)", time: "08:55 AM" },
         { type: "imessage · Nisa", text: "“matcha first, obviously”", time: "08:48 AM" },
       ],
       storyline:
-        "You walked a quiet Telegraph for coffee{0} — the last calm before twenty-four hours of noise.",
+        "You walked a quiet Telegraph for coffee{0} before the doors opened.",
       citations: [{ n: 1, label: "photo · 8:53 AM · Telegraph Ave" }],
       principle: "Caffeine is my courage.",
       sealDate: "sealed Jun 20, 2026 · 8:53 AM",
@@ -93,17 +93,17 @@ const SEED = {
       visits: "10:10 AM · lights down",
       sealed: false,
       mood: { label: "small in a big room", hue: 265 },
-      music: "(opening ceremony — no music)",
+      music: "(opening ceremony · no music)",
       media: [{ type: "photo", src: "photos/img_2311.jpg" }, { type: "photo", src: "photos/img_2316.jpg" }],
       cover: "center/cover url('photos/img_2316.jpg')",
       anchor: { place: "South Drive · UC Berkeley", time: "Sat Jun 20, 2026 · 10:10 AM", photo: "center/cover url('photos/img_2311.jpg')" },
       cues: [
         { type: "photo · EXIF", text: "Dark auditorium, “AI 2026” on the screen. 37.8710, -122.2592.", time: "10:10 AM" },
-        { type: "slide", text: "“$11.7M raised” — YC, AMD, Hugging Face on the wall", time: "10:18 AM" },
+        { type: "slide", text: "“$11.7M raised” · YC, AMD, Hugging Face on the wall", time: "10:18 AM" },
         { type: "imessage · Derek", text: "“where are you sitting”", time: "10:06 AM" },
       ],
       storyline:
-        "In the dark before any code{0}, you watched the sponsors' numbers climb{1} and let yourself believe the weekend mattered.",
+        "In the dark before any code{0}, you watched the sponsors' numbers climb{1} and thought about what you wanted from it.",
       citations: [
         { n: 1, label: "photo · 10:10 AM · auditorium" },
         { n: 2, label: "slide · 10:18 AM" },
@@ -126,7 +126,7 @@ const SEED = {
       visits: "1:53 PM · heads down",
       sealed: true,
       mood: { label: "wired, alive", hue: 12 },
-      music: "Charli xcx — 365",
+      music: "Charli xcx · 365",
       cover: "center/cover url('photos/img_2334.jpg')",
       media: [
         { type: "video", src: "photos/vid_venue.mp4", poster: "photos/vid_venue.jpg" },
@@ -136,7 +136,7 @@ const SEED = {
       anchor: { place: "Bancroft Way · the venue lawn", time: "Sat Jun 20, 2026 · 1:53 PM", photo: "center/cover url('photos/img_2334.jpg')" },
       cues: [
         { type: "photo · EXIF", text: "Tent full of laptops; a llama on the lawn outside. 37.8692, -122.2595.", time: "01:53 PM" },
-        { type: "spotify", text: "on repeat: Charli xcx — “365” (high energy)", time: "02:10 PM" },
+        { type: "spotify", text: "on repeat: Charli xcx · “365” (high energy)", time: "02:10 PM" },
         { type: "imessage · team", text: "“there are ROBOTS outside”", time: "03:31 PM" },
       ],
       storyline:
@@ -158,7 +158,7 @@ const SEED = {
     },
   ],
 
-  // the explorable world — REAL lat/lng from photo EXIF + two locked campus spots
+  // the explorable world, REAL lat/lng from photo EXIF + two locked campus spots
   map: [
     { id: "durant",    name: "The room on Durant", lat: 37.867839, lng: -122.256194, discovered: true, capsuleId: "durant" },
     { id: "telegraph", name: "Quargo Coffee",      lat: 37.867930, lng: -122.259000, discovered: true, capsuleId: "telegraph" },
