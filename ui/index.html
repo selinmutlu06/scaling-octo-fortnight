@@ -15,12 +15,12 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 
-  <link rel="stylesheet" href="styles.css?v=12" />
+  <link rel="stylesheet" href="styles.css?v=18" />
 </head>
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -47,10 +47,9 @@
     <!-- VIEW: home -->
     <section id="view-home" class="view active">
       <div class="home-topbar">
-        <img src="logo.svg?v=12" alt="recapsule" class="home-logo" id="logo-home" />
+        <img src="logo.svg?v=18" alt="recapsule" class="home-logo" id="logo-home" />
         <span class="home-brand">recapsule</span>
       </div>
-      <p class="home-sub">your memories, grounded</p>
       <div class="home-hero">
         <svg class="home-scene-svg" viewBox="0 0 360 200" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -148,127 +147,32 @@
           <path d="M198 72 Q238 50 278 66" fill="none" stroke="#2a1c08" stroke-width="1.8" stroke-dasharray="2.5 8.5" stroke-linecap="round" opacity=".28"/>
         </svg>
       </div>
-      <div class="home-wrap">
-
-        <!-- view map button -->
-        <button class="capsule-choice-wrap" id="btn-viewmap" aria-label="View map">
-          <div class="cap-pill-wrap" style="transform:rotate(-8deg)" filter="url(#lw)">
-            <svg viewBox="0 0 300 86" fill="none" class="capsule-btn-svg" style="filter:url(#lw)">
-              <rect x="40" y="14" width="220" height="56" rx="28" fill="#edd878" stroke="#2a1c08" stroke-width="3.5"/>
-              <ellipse cx="48" cy="42" rx="22" ry="30" fill="#d4aa3a" stroke="#2a1c08" stroke-width="3.5"/>
-              <ellipse cx="252" cy="42" rx="22" ry="30" fill="#d4aa3a" stroke="#2a1c08" stroke-width="3.5"/>
-              <rect x="105" y="13" width="14" height="58" rx="7" fill="#c49820" stroke="#2a1c08" stroke-width="2.5"/>
-              <rect x="175" y="13" width="14" height="58" rx="7" fill="#c49820" stroke="#2a1c08" stroke-width="2.5"/>
-            </svg>
-            <span class="cap-pill-label">view map</span>
-          </div>
-          <svg viewBox="0 0 300 40" fill="none" class="ground-grass">
-            <path d="M0 35 Q75 28 150 33 Q225 38 300 30 L300 40 L0 40 Z" fill="#a08060"/>
-            <path d="M15 34 Q17 24 13 16 Q20 26 22 34" fill="#4a7230"/>
-            <path d="M35 34 Q38 22 33 12 Q40 24 43 34" fill="#5a8040"/>
-            <path d="M55 35 Q58 23 52 14 Q60 25 62 35" fill="#4a7230"/>
-            <path d="M80 34 Q83 21 78 13 Q86 24 88 34" fill="#5a8040"/>
-            <path d="M105 35 Q108 22 103 12 Q111 24 113 35" fill="#4a7230"/>
-            <path d="M130 34 Q133 23 128 14 Q136 25 138 34" fill="#5a8040"/>
-            <path d="M160 35 Q163 21 158 13 Q166 24 168 35" fill="#4a7230"/>
-            <path d="M190 34 Q193 22 188 13 Q196 25 198 34" fill="#5a8040"/>
-            <path d="M220 35 Q223 23 218 14 Q226 25 228 35" fill="#4a7230"/>
-            <path d="M250 34 Q253 21 248 12 Q256 24 258 34" fill="#5a8040"/>
-            <path d="M275 35 Q278 23 273 14 Q281 25 283 35" fill="#4a7230"/>
-          </svg>
-        </button>
-
-        <!-- dig/drop button -->
-        <button class="capsule-choice-wrap" id="btn-digdrop" aria-label="Dig or drop capsule">
-          <div class="cap-pill-wrap" style="transform:rotate(-5deg)" filter="url(#lw)">
-            <svg viewBox="0 0 300 86" fill="none" class="capsule-btn-svg" style="filter:url(#lw)">
-              <rect x="40" y="14" width="220" height="56" rx="28" fill="#edd878" stroke="#2a1c08" stroke-width="3.5"/>
-              <ellipse cx="48" cy="42" rx="22" ry="30" fill="#d4aa3a" stroke="#2a1c08" stroke-width="3.5"/>
-              <ellipse cx="252" cy="42" rx="22" ry="30" fill="#d4aa3a" stroke="#2a1c08" stroke-width="3.5"/>
-              <rect x="105" y="13" width="14" height="58" rx="7" fill="#c49820" stroke="#2a1c08" stroke-width="2.5"/>
-              <rect x="175" y="13" width="14" height="58" rx="7" fill="#c49820" stroke="#2a1c08" stroke-width="2.5"/>
-            </svg>
-            <span class="cap-pill-label">dig / drop capsule</span>
-          </div>
-          <svg viewBox="0 0 300 40" fill="none" class="ground-grass ground-dirt">
-            <path d="M0 32 Q75 25 150 30 Q225 35 300 28 L300 40 L0 40 Z" fill="#8c6848"/>
-            <circle cx="30" cy="37" r="2.5" fill="#6a4828" opacity=".6"/>
-            <circle cx="70" cy="38" r="2" fill="#6a4828" opacity=".5"/>
-            <circle cx="110" cy="36" r="3" fill="#6a4828" opacity=".6"/>
-            <circle cx="155" cy="38" r="2" fill="#6a4828" opacity=".5"/>
-            <circle cx="200" cy="37" r="2.5" fill="#6a4828" opacity=".6"/>
-            <circle cx="240" cy="39" r="2" fill="#6a4828" opacity=".5"/>
-            <circle cx="275" cy="36" r="3" fill="#6a4828" opacity=".6"/>
-          </svg>
-        </button>
-
+      <div class="home-copy">
+        <h1 class="home-headline">Bury a moment.<br/>Come back for it.</h1>
+        <p class="home-tagline">Drop a time capsule where you stand — photos, a note, the song you had on. It stays sealed until you return.</p>
       </div>
-    </section>
 
-    <!-- VIEW: discover -->
-    <section id="view-discover" class="view">
-      <div class="screen-nav">
-        <img src="logo.svg?v=12" alt="recapsule home" class="screen-logo-sm" data-goto-home />
-      </div>
-      <div class="discover-wrap">
-        <div class="telescope-area">
-          <svg class="telescope-svg" viewBox="0 0 220 130" fill="none">
-            <rect x="8" y="54" width="35" height="18" rx="9" fill="#d4aa3a" stroke="#2a1c08" stroke-width="3"/>
-            <rect x="40" y="40" width="85" height="46" rx="8" fill="#e0bc4a" stroke="#2a1c08" stroke-width="3"/>
-            <rect x="122" y="28" width="60" height="70" rx="10" fill="#d4aa3a" stroke="#2a1c08" stroke-width="3"/>
-            <rect x="64" y="39" width="12" height="48" rx="6" fill="#c49820" stroke="#2a1c08" stroke-width="2.5"/>
-            <rect x="94" y="39" width="12" height="48" rx="6" fill="#c49820" stroke="#2a1c08" stroke-width="2.5"/>
-            <ellipse cx="183" cy="63" rx="10" ry="14" fill="#b8cce4" stroke="#2a1c08" stroke-width="2"/>
-            <line x1="92" y1="86" x2="68" y2="125" stroke="#2a1c08" stroke-width="3" stroke-linecap="round"/>
-            <line x1="92" y1="86" x2="116" y2="125" stroke="#2a1c08" stroke-width="3" stroke-linecap="round"/>
-            <line x1="66" y1="118" x2="118" y2="118" stroke="#2a1c08" stroke-width="2.5" stroke-linecap="round"/>
-          </svg>
-          <p class="discover-question">what do you want to do?</p>
-        </div>
-
-        <div class="discover-actions">
-          <button class="discover-action-btn" id="btn-dig-old" aria-label="Dig up old capsule">
-            <div class="discover-btn-card">
-              <svg viewBox="0 0 56 56" fill="none" width="48" height="48">
-                <circle cx="28" cy="24" r="16" fill="none" stroke="#c84030" stroke-width="3.5"/>
-                <circle cx="28" cy="24" r="7" fill="none" stroke="#c84030" stroke-width="2.5"/>
-                <path d="M12 38 Q28 56 28 56 Q28 56 44 38" fill="none" stroke="#c84030" stroke-width="3.5" stroke-linejoin="round"/>
-              </svg>
-              <span class="discover-action-label">dig up old<br>capsule</span>
-            </div>
-          </button>
-
-          <button class="discover-action-btn" id="btn-drop-new" aria-label="Drop new capsule">
-            <div class="discover-btn-card">
-              <svg viewBox="0 0 56 70" fill="none" width="48" height="60">
-                <path d="M28 6 Q44 6 46 22 Q48 36 28 50 Q8 36 10 22 Q12 6 28 6 Z" fill="none" stroke="#c84030" stroke-width="3.5"/>
-                <line x1="28" y1="48" x2="28" y2="68" stroke="#c84030" stroke-width="3.5" stroke-linecap="round"/>
-                <line x1="16" y1="62" x2="40" y2="62" stroke="#c84030" stroke-width="3" stroke-linecap="round"/>
-              </svg>
-              <span class="discover-action-label">drop new<br>capsule</span>
-            </div>
-          </button>
-        </div>
-
-        <div class="discover-soil" aria-hidden="true">
-          <svg viewBox="0 0 300 30" fill="none" width="100%" height="30">
-            <circle cx="20" cy="15" r="3" fill="#8c6848" opacity=".5"/>
-            <circle cx="55" cy="20" r="2" fill="#8c6848" opacity=".4"/>
-            <circle cx="95" cy="12" r="2.5" fill="#8c6848" opacity=".5"/>
-            <circle cx="140" cy="22" r="2" fill="#8c6848" opacity=".4"/>
-            <circle cx="175" cy="10" r="3" fill="#8c6848" opacity=".5"/>
-            <circle cx="215" cy="18" r="2" fill="#8c6848" opacity=".4"/>
-            <circle cx="255" cy="14" r="2.5" fill="#8c6848" opacity=".5"/>
-            <circle cx="285" cy="24" r="2" fill="#8c6848" opacity=".4"/>
-          </svg>
-        </div>
+      <div class="home-cta">
+        <button class="cta cta-primary" id="btn-viewmap" aria-label="Explore the map">
+          <span class="cta-ico" aria-hidden="true">
+            <svg viewBox="0 0 40 20" fill="none"><rect x="6" y="4" width="28" height="12" rx="6" fill="#f0d98a" stroke="#2a1c08" stroke-width="2.2"/><line x1="15.5" y1="4.6" x2="15.5" y2="15.4" stroke="#2a1c08" stroke-width="2.2"/><line x1="24.5" y1="4.6" x2="24.5" y2="15.4" stroke="#2a1c08" stroke-width="2.2"/></svg>
+          </span>
+          <span>explore the map</span>
+          <span class="cta-arrow" aria-hidden="true">→</span>
+        </button>
+        <button class="cta cta-ghost" id="btn-digdrop" aria-label="Seal a new capsule">
+          <span class="cta-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2a1c08" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
+          <span>seal a new capsule</span>
+        </button>
       </div>
     </section>
 
     <!-- VIEW: map -->
     <section id="view-map" class="view">
       <div class="screen-nav">
-        <img src="logo.svg?v=12" alt="recapsule home" class="screen-logo-sm" data-goto-home />
+        <img src="logo.svg?v=18" alt="recapsule home" class="screen-logo-sm" data-goto-home />
       </div>
       <div class="map-head">
         <p class="map-title-green">map</p>
@@ -310,7 +214,7 @@
     <!-- VIEW: principle graph -->
     <section id="view-graph" class="view">
       <div class="screen-nav">
-        <img src="logo.svg?v=12" alt="recapsule home" class="screen-logo-sm" data-goto-home />
+        <img src="logo.svg?v=18" alt="recapsule home" class="screen-logo-sm" data-goto-home />
         <svg class="compass-rose-sm" viewBox="0 0 50 50" width="40" height="40">
           <circle cx="25" cy="25" r="22" fill="none" stroke="#4a7ab0" stroke-width="2"/>
           <text x="25" y="12" text-anchor="middle" font-family="'Caveat',cursive" font-size="10" fill="#2a1c10">N</text>
@@ -410,105 +314,6 @@
       </div>
     </section>
 
-    <!-- VIEW: camera -->
-    <section id="view-camera" class="view">
-      <div class="screen-nav">
-        <img src="logo.svg?v=12" alt="recapsule home" class="screen-logo-sm" data-goto-home />
-      </div>
-      <div class="camera-title-cloud">
-        <p class="camera-title-text">Point the<br>camera to<br>the ground</p>
-      </div>
-      <div class="camera-wrap" id="camera-wrap-el">
-        <video id="camera-feed" class="camera-feed" autoplay muted playsinline></video>
-
-        <svg class="camera-scene" viewBox="0 0 280 320" fill="none">
-          <rect x="0" y="0" width="280" height="200" fill="#deeef8"/>
-          <rect x="0" y="200" width="280" height="120" fill="#5a7840"/>
-          <path d="M10 200 Q12 182 8 168 Q16 184 18 200" fill="#3a6020"/>
-          <path d="M30 200 Q34 178 28 162 Q36 180 40 200" fill="#4a7030"/>
-          <path d="M55 200 Q58 180 52 166 Q60 182 63 200" fill="#3a6020"/>
-          <path d="M80 200 Q84 176 78 162 Q86 180 90 200" fill="#4a7030"/>
-          <path d="M108 200 Q112 180 106 164 Q114 182 118 200" fill="#3a6020"/>
-          <path d="M135 200 Q138 178 133 164 Q141 180 144 200" fill="#4a7030"/>
-          <path d="M162 200 Q166 176 160 162 Q168 180 172 200" fill="#3a6020"/>
-          <path d="M190 200 Q194 178 188 164 Q196 182 200 200" fill="#4a7030"/>
-          <path d="M218 200 Q222 178 216 164 Q224 180 228 200" fill="#3a6020"/>
-          <path d="M248 200 Q252 180 246 164 Q254 182 258 200" fill="#4a7030"/>
-          <circle cx="140" cy="128" r="18" fill="#3a2c1a" stroke="#2a1c08" stroke-width="2"/>
-          <path d="M140 146 L140 190" stroke="#3a2c1a" stroke-width="8" stroke-linecap="round"/>
-          <path d="M110 162 L140 152 L170 162" stroke="#3a2c1a" stroke-width="7" stroke-linecap="round"/>
-          <path d="M140 190 L120 220" stroke="#3a2c1a" stroke-width="7" stroke-linecap="round"/>
-          <path d="M140 190 L160 220" stroke="#3a2c1a" stroke-width="7" stroke-linecap="round"/>
-          <rect x="100" y="100" width="80" height="140" fill="none" stroke="#c84030" stroke-width="3" stroke-dasharray="8 5" rx="4"/>
-        </svg>
-
-        <div class="swipe-hint-label">Swipe side<br>to side<br>to start<br>digging</div>
-
-        <div class="swipe-arrow-anim" id="swipe-arrow" aria-hidden="true">
-          <svg viewBox="0 0 80 24" fill="none" width="80" height="24">
-            <path d="M4 12 L60 12" stroke="#c84030" stroke-width="3" stroke-linecap="round"/>
-            <path d="M50 5 L60 12 L50 19" stroke="#c84030" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-      </div>
-      <button class="primary" id="btn-start-dig">start digging →</button>
-    </section>
-
-    <!-- VIEW: drag to bury -->
-    <section id="view-drag" class="view">
-      <div class="screen-nav">
-        <img src="logo.svg?v=12" alt="recapsule home" class="screen-logo-sm" data-goto-home />
-      </div>
-      <p class="drag-label">Drag capsule</p>
-      <div class="drag-scene" id="drag-scene">
-        <div class="drag-capsule" id="drag-capsule">
-          <svg viewBox="0 0 260 70" fill="none" width="240" height="65">
-            <g transform="rotate(-10 130 35)">
-              <rect x="30" y="8" width="200" height="50" rx="25" fill="#edd878" stroke="#2a1c08" stroke-width="3"/>
-              <ellipse cx="38" cy="33" rx="20" ry="27" fill="#d4aa3a" stroke="#2a1c08" stroke-width="3"/>
-              <ellipse cx="230" cy="33" rx="20" ry="27" fill="#d4aa3a" stroke="#2a1c08" stroke-width="3"/>
-              <rect x="92" y="7" width="12" height="52" rx="6" fill="#c49820" stroke="#2a1c08" stroke-width="2.5"/>
-              <rect x="154" y="7" width="12" height="52" rx="6" fill="#c49820" stroke="#2a1c08" stroke-width="2.5"/>
-              <text x="130" y="40" text-anchor="middle" font-family="'Caveat',cursive" font-size="20" fill="#2a1c08" font-weight="600">recapsule</text>
-            </g>
-          </svg>
-          <span class="soil-particle sp1"></span>
-          <span class="soil-particle sp2"></span>
-          <span class="soil-particle sp3"></span>
-          <span class="soil-particle sp4"></span>
-          <span class="soil-particle sp5"></span>
-          <span class="soil-particle sp6"></span>
-          <span class="soil-particle sp7"></span>
-          <span class="soil-particle sp8"></span>
-          <span class="soil-particle sp9"></span>
-          <span class="soil-particle sp10"></span>
-          <span class="soil-particle sp11"></span>
-          <span class="soil-particle sp12"></span>
-        </div>
-        <div class="buried-text" id="buried-text">buried!</div>
-        <div class="xp-float" id="xp-float">+1 memory ✦</div>
-        <div class="drag-zone" id="drag-zone"><span class="drag-zone-hint">drop here</span></div>
-
-        <svg class="stump-scene" viewBox="0 0 300 200" fill="none">
-          <path d="M0 60 Q50 48 100 54 Q150 60 200 48 Q250 36 300 52 L300 200 L0 200 Z" fill="#8c6848"/>
-          <path d="M0 60 Q50 48 100 54 Q150 60 200 48 Q250 36 300 52" fill="none" stroke="#4a7230" stroke-width="4"/>
-          <path d="M20 58 Q22 44 18 34 Q26 46 28 58" fill="#4a7230"/>
-          <path d="M50 52 Q53 38 48 28 Q56 40 58 52" fill="#5a8040"/>
-          <path d="M240 50 Q243 36 238 26 Q246 38 248 50" fill="#4a7230"/>
-          <path d="M270 54 Q273 40 268 30 Q276 42 278 54" fill="#5a8040"/>
-          <path d="M108 58 Q98 62 92 90 L92 160 L208 160 L208 90 Q202 62 192 58 Z" fill="#8c5c2a" stroke="#2a1c08" stroke-width="3"/>
-          <ellipse cx="150" cy="58" rx="50" ry="18" fill="#a06c3a" stroke="#2a1c08" stroke-width="3"/>
-          <ellipse cx="150" cy="58" rx="38" ry="12" fill="none" stroke="#7a4a1a" stroke-width="2" opacity=".6"/>
-          <ellipse cx="150" cy="58" rx="24" ry="7" fill="none" stroke="#7a4a1a" stroke-width="1.5" opacity=".5"/>
-          <circle cx="40" cy="100" r="3.5" fill="#6a4828" opacity=".7"/>
-          <circle cx="250" cy="120" r="3" fill="#6a4828" opacity=".6"/>
-          <circle cx="60" cy="150" r="2.5" fill="#6a4828" opacity=".6"/>
-          <circle cx="270" cy="160" r="2" fill="#6a4828" opacity=".5"/>
-          <circle cx="30" cy="140" r="2" fill="#6a4828" opacity=".5"/>
-        </svg>
-      </div>
-    </section>
-
     <!-- bottom tab bar -->
     <nav class="tabbar" id="tabbar">
       <button class="tab" data-tab="map" aria-label="Map">
@@ -560,8 +365,8 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
 
-  <script src="seed.js?v=12"></script>
-  <script src="api.js?v=12"></script>
-  <script src="app.js?v=12"></script>
+  <script src="seed.js?v=18"></script>
+  <script src="api.js?v=18"></script>
+  <script src="app.js?v=18"></script>
 </body>
 </html>

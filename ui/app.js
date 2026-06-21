@@ -1,3 +1,4 @@
+window.addEventListener("error",function(e){if(!/ERR:/.test(document.title))document.title="ERR: "+(e.message)+" @"+(e.lineno);});
 /* RETURN — frontend controller.
  * Loop: HOME → DISCOVER → (dig old: places / drop new: camera → drag → create)
  *        HOME → MAP → open capsule → reconstruct → reveal → talk to past you
@@ -105,19 +106,16 @@ let highlightTimer;
 // --- view routing ---
 const views = {
   home: document.getElementById("view-home"),
-  discover: document.getElementById("view-discover"),
   map: document.getElementById("view-map"),
   graph: document.getElementById("view-graph"),
   places: document.getElementById("view-places"),
   create: document.getElementById("view-create"),
   reconstruct: document.getElementById("view-reconstruct"),
   reveal: document.getElementById("view-reveal"),
-  camera: document.getElementById("view-camera"),
-  drag: document.getElementById("view-drag"),
 };
 
 // hide tab bar in these flow views
-const FLOW = ["create", "reconstruct", "reveal", "camera", "drag", "discover"];
+const FLOW = ["create", "reconstruct", "reveal"];
 const TAB_FOR_VIEW = { map: "map", graph: "graph", places: "capsules" };
 
 function show(name) {
@@ -695,17 +693,10 @@ document.getElementById("btn-viewmap").addEventListener("click", () => {
 
 document.getElementById("btn-digdrop").addEventListener("click", () => {
   SoundFX.tap();
-  show("discover");
+  // straight to the clean seal form (no telescope/camera/drag detour)
+  startCreate(SEED.map.find((p) => !p.capsuleId) || SEED.map[0]);
 });
 
-// --- DISCOVER screen buttons ---
-document.getElementById("btn-dig-old").addEventListener("click", () => {
-  show("places");
-  renderPlaces();
-});
-document.getElementById("btn-drop-new").addEventListener("click", () => {
-  openCameraScreen();
-});
 
 // --- all [data-goto-home] elements → home ---
 document.querySelectorAll("[data-goto-home]").forEach((b) =>
@@ -734,7 +725,6 @@ compassEl.addEventListener("click", () => {
 });
 
 // --- camera / drag screen logic ---
-document.getElementById("btn-start-dig").addEventListener("click", openDragScreen);
 
 let cameraStream = null;
 async function openCameraScreen() {
@@ -904,5 +894,4 @@ hydrateFromBackend();
 if (location.search.includes("demo=venue")) { active = getPlace("venue"); reveal(); }
 if (location.search.includes("demo=map")) { show("map"); renderMap(); }
 if (location.search.includes("demo=principles")) { show("graph"); renderGraph(); }
-if (location.search.includes("demo=discover")) { show("discover"); }
 if (location.search.includes("demo=places")) { show("places"); }
