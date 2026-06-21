@@ -31,7 +31,7 @@ const escapeHTML = (s) => s.replace(/[&<>"']/g, (c) =>
 
 // --- REAL YouTube Music history (data/soundtrack.json) ---
 let SOUNDTRACK = {};
-fetch("data/soundtrack.json?v=26").then((r) => (r.ok ? r.json() : {})).then((d) => {
+fetch("data/soundtrack.json?v=28").then((r) => (r.ok ? r.json() : {})).then((d) => {
   SOUNDTRACK = d || {};
   // if a reveal is already open when the data lands, re-render it with the real soundtrack
   try { if (active && views.reveal && views.reveal.classList.contains("active")) reveal(); } catch (e) {}
@@ -165,16 +165,18 @@ function toast(msg) {
 let map = null, markerLayer = null;
 function stopSpin() {}
 
+// an upright buried-canister time capsule (not a pill)
 function capsuleSVG(locked) {
   const fc = locked ? "#d8b24a" : "#f0d98a", ec = locked ? "#b88a28" : "#d4aa3a";
-  return `<svg viewBox="0 0 52 22" width="48" height="20" fill="none">
-    <rect x="4" y="3" width="44" height="16" rx="8" fill="${fc}" stroke="#2a1c08" stroke-width="2"/>
-    <ellipse cx="6" cy="11" rx="8" ry="10" fill="${ec}" stroke="#2a1c08" stroke-width="2"/>
-    <ellipse cx="46" cy="11" rx="8" ry="10" fill="${ec}" stroke="#2a1c08" stroke-width="2"/>
-    <rect x="21" y="2.5" width="3.5" height="17" rx="1.5" fill="#c49820" stroke="#2a1c08" stroke-width="1"/>
-    <rect x="28" y="2.5" width="3.5" height="17" rx="1.5" fill="#c49820" stroke="#2a1c08" stroke-width="1"/></svg>`;
+  return `<svg viewBox="0 0 30 36" width="26" height="31" fill="none">
+    <rect x="4" y="3" width="22" height="8" rx="3.5" fill="${ec}" stroke="#2a1c08" stroke-width="2"/>
+    <path d="M6 11 h18 v15 a9 9 0 0 1 -18 0 Z" fill="${fc}" stroke="#2a1c08" stroke-width="2" stroke-linejoin="round"/>
+    <line x1="6" y1="16" x2="24" y2="16" stroke="#2a1c08" stroke-width="1.4" opacity=".7"/>
+    <path d="M15 18.4 l1.15 2.33 2.57.37-1.86 1.81.44 2.56L15 26.27l-2.3 1.2.44-2.56-1.86-1.81 2.57-.37z" fill="#fff6da" stroke="#2a1c08" stroke-width=".8" stroke-linejoin="round"/>
+  </svg>`;
 }
 
+let mapBounds = null, mapFitted = false;
 function ensureMap() {
   if (map || typeof L === "undefined") return;
   const c = document.getElementById("map");
@@ -186,16 +188,26 @@ function ensureMap() {
     boxZoom: false, keyboard: false, minZoom: 14, maxZoom: 18, zoomSnap: 0.5,
   });
   L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19 }).addTo(map);
-  const pts = SEED.map.filter((m) => m.lat != null).map((m) => [m.lat, m.lng]);
-  const bounds = L.latLngBounds(pts);
-  map.fitBounds(bounds, { padding: [44, 44], maxZoom: 16.5 });
-  map.setMaxBounds(bounds.pad(0.8)); // keep the view near the capsules
+  mapBounds = L.latLngBounds(SEED.map.filter((m) => m.lat != null).map((m) => [m.lat, m.lng]));
+  map.setView(mapBounds.getCenter(), 15); // provisional; real fit happens once sized
+}
+
+// fit reliably once the container has its final size (avoids mis-sized loads)
+function fitMap() {
+  if (!map || !mapBounds) return;
+  map.invalidateSize();
+  map.fitBounds(mapBounds, { padding: [40, 40], maxZoom: 16.5 });
+  map.setMaxBounds(mapBounds.pad(1.2));
 }
 
 function renderMap() {
   ensureMap();
   if (!map) return;
   map.invalidateSize();
+  if (!mapFitted) {
+    requestAnimationFrame(fitMap);
+    setTimeout(() => { fitMap(); mapFitted = true; }, 280);
+  }
   if (markerLayer) markerLayer.remove();
   markerLayer = L.layerGroup().addTo(map);
   let found = 0;
