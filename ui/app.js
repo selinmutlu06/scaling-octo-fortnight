@@ -31,7 +31,7 @@ const escapeHTML = (s) => s.replace(/[&<>"']/g, (c) =>
 
 // --- REAL YouTube Music history (data/soundtrack.json) ---
 let SOUNDTRACK = {};
-fetch("data/soundtrack.json?v=25").then((r) => (r.ok ? r.json() : {})).then((d) => {
+fetch("data/soundtrack.json?v=26").then((r) => (r.ok ? r.json() : {})).then((d) => {
   SOUNDTRACK = d || {};
   // if a reveal is already open when the data lands, re-render it with the real soundtrack
   try { if (active && views.reveal && views.reveal.classList.contains("active")) reveal(); } catch (e) {}
