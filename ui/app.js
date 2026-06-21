@@ -402,10 +402,24 @@ function openPlace(id) {
   revealBtn.classList.add("hidden");
   show("reconstruct");
 
-  const cueHTML = (c) => `
-    <div class="ctype">${c.type}</div>
-    <div class="ctext">${c.text}</div>
-    <div class="ctime">${c.time}</div>`;
+  const cueIcon = (t) => {
+    t = (t || "").toLowerCase();
+    const I = (k, p) => ({ k, svg: `<svg viewBox="0 0 24 24" fill="none" stroke="#2a1c08" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${p}</svg>` });
+    if (/photo|exif|image/.test(t)) return I("photo", '<rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.4"/><path d="M8.5 6 10 4h4l1.5 2"/>');
+    if (/voice|audio/.test(t)) return I("voice", '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v4"/>');
+    if (/spotify|music|youtube|song|playing/.test(t)) return I("music", '<circle cx="7" cy="18" r="2.5"/><circle cx="18" cy="16" r="2.5"/><path d="M9.5 18V6l11-2v10"/>');
+    if (/imessage|message|text|sms/.test(t)) return I("message", '<path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.6A8 8 0 1 1 21 12Z"/>');
+    if (/calendar|event/.test(t)) return I("calendar", '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/>');
+    if (/slide|screen/.test(t)) return I("slide", '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M9 21h6M12 17v4"/>');
+    return I("note", '<path d="M5 4h11l3 3v13H5z"/><path d="M8 9h8M8 13h6"/>');
+  };
+  const cueHTML = (c) => {
+    const m = cueIcon(c.type);
+    const label = c.type.split("·")[0].trim();
+    return `<span class="cue-ic ${m.k}">${m.svg}</span>
+      <div class="cue-main"><div class="cue-src">${label}</div><div class="cue-text">${c.text}</div></div>
+      <div class="cue-t">${c.time}</div>`;
+  };
 
   if (reduceMotion) {
     active.cues.forEach((c) => {
@@ -634,26 +648,7 @@ document.querySelectorAll("[data-goto-home]").forEach((b) =>
   b.addEventListener("click", () => { closeCameraStream(); show("home"); })
 );
 
-// --- COMPASS on map view: spin needle then go to graph ---
-const compassEl = document.getElementById("compass");
-const compassNeedle = document.getElementById("compass-needle");
-
-compassEl.addEventListener("click", () => {
-  SoundFX.shimmer();
-  // remove class first to allow re-triggering
-  compassNeedle.classList.remove("spin-once");
-  // force reflow so re-add triggers animation
-  void compassNeedle.offsetWidth;
-  compassNeedle.classList.add("spin-once");
-
-  // after spin completes (1.2s) go to graph
-  compassNeedle.addEventListener("animationend", function onSpinEnd() {
-    compassNeedle.removeEventListener("animationend", onSpinEnd);
-    compassNeedle.classList.remove("spin-once");
-    switchTab("graph");
-    renderGraph();
-  }, { once: true });
-});
+// (compass removed from the map view)
 
 // --- camera / drag screen logic ---
 
@@ -862,3 +857,5 @@ function splitReveal(el) {
   el.innerHTML = ""; el.appendChild(frag);
 }
 splitReveal(document.querySelector(".home-headline"));
+
+if(location.search.includes("demo=recon")){openPlace("durant");}

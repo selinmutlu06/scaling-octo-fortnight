@@ -1072,16 +1072,16 @@ body {
    MOOD PILL
    ========================================================================= */
 .mood-pill {
-  display: inline-flex; align-items: center; gap: 7px;
-  margin-top: 10px;
-  font-family: var(--hand); font-size: 16px; color: var(--ink-mid);
-  background: rgba(200,144,42,.15); border: 1.5px solid var(--stroke);
-  border-radius: 999px; padding: 5px 14px 5px 10px;
-  width: fit-content;
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 10px; width: fit-content;
+  font-family: var(--hand); font-size: 14px; font-weight: 600; color: var(--ink);
+  background: var(--paper); border: 2px solid var(--ink);
+  border-radius: 999px; padding: 5px 13px 5px 11px;
+  box-shadow: 2px 2px 0 rgba(42,28,16,.3);
 }
 .mood-pill::before {
-  content: ""; width: 9px; height: 9px; border-radius: 50%;
-  background: hsl(var(--h) 62% 62%); box-shadow: 0 0 8px hsl(var(--h) 70% 60% / .8);
+  content: ""; width: 10px; height: 10px; border-radius: 50%;
+  background: hsl(var(--h) 62% 62%); box-shadow: 0 0 0 2px rgba(42,28,16,.12);
 }
 
 /* =========================================================================
@@ -1107,27 +1107,29 @@ body {
 /* =========================================================================
    RECONSTRUCT FEED
    ========================================================================= */
-.feed { display: flex; flex-direction: column; gap: 2px; min-height: 130px; }
+.feed { display: flex; flex-direction: column; gap: 10px; min-height: 130px; }
 .cue {
-  position: relative;
-  padding: 10px 0 12px 22px;
-  opacity: 0; transform: translateX(-8px);
-  animation: cueIn .55s var(--bounce) forwards;
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px; background: var(--paper-alt);
+  border: 2px solid var(--ink); border-radius: 14px;
+  box-shadow: 2px 3px 0 rgba(42,28,16,.3);
+  opacity: 0; transform: translateY(8px);
+  animation: cueIn .5s var(--bounce) forwards;
 }
-.cue::before {
-  content: ""; position: absolute; left: 0; top: 14px;
-  width: 9px; height: 9px; border-radius: 50%;
-  background: var(--gold); box-shadow: 0 0 10px rgba(200,144,42,.6);
-}
-.cue::after {
-  content: ""; position: absolute; left: 4px; top: 23px; bottom: -2px;
-  width: 1px; background: rgba(122,96,80,.25);
-}
-.cue:last-child::after { display: none; }
 @keyframes cueIn { to { opacity: 1; transform: none; } }
-.cue .ctype { font-family: var(--mono); font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); }
-.cue .ctext { font-family: var(--hand); font-size: 17px; line-height: 1.5; margin-top: 4px; color: var(--ink); }
-.cue .ctime { font-family: var(--mono); font-size: 10px; color: var(--ink-soft); margin-top: 4px; }
+.cue-ic { flex-shrink: 0; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; border: 2px solid var(--ink); }
+.cue-ic svg { width: 18px; height: 18px; }
+.cue-ic.photo { background: #f0d98a; }
+.cue-ic.message { background: #bcd6b4; }
+.cue-ic.music { background: #bfe0c4; }
+.cue-ic.voice { background: #d8c4e0; }
+.cue-ic.calendar { background: #e8b8a8; }
+.cue-ic.slide { background: #cfe0ee; }
+.cue-ic.note { background: #e8dcc0; }
+.cue-main { flex: 1; min-width: 0; }
+.cue-src { font-family: var(--hand); font-size: 12.5px; font-weight: 600; color: var(--ink-mid); }
+.cue-text { font-family: var(--hand); font-size: 16px; line-height: 1.4; color: var(--ink); margin-top: 1px; }
+.cue-t { font-family: var(--hand); font-size: 12px; color: var(--ink-soft); flex-shrink: 0; white-space: nowrap; }
 
 /* =========================================================================
    STORYLINE / REVEAL
