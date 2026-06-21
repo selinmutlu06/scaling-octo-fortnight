@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <link rel="stylesheet" href="styles.css?v=23" />
+  <link rel="stylesheet" href="styles.css?v=25" />
 </head>
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -53,7 +53,7 @@
     <!-- VIEW: home -->
     <section id="view-home" class="view active">
       <div class="home-topbar">
-        <img src="logo.svg?v=23" alt="recapsule" class="home-logo" id="logo-home" />
+        <img src="logo.svg?v=25" alt="recapsule" class="home-logo" id="logo-home" />
         <span class="home-brand">recapsule</span>
       </div>
       <div class="home-hero">
@@ -161,7 +161,7 @@
       <div class="home-cta">
         <button class="cta cta-primary" id="btn-viewmap" aria-label="Explore the map">
           <span class="cta-ico" aria-hidden="true">
-            <svg viewBox="0 0 40 20" fill="none"><rect x="6" y="4" width="28" height="12" rx="6" fill="#f0d98a" stroke="#2a1c08" stroke-width="2.2"/><line x1="15.5" y1="4.6" x2="15.5" y2="15.4" stroke="#2a1c08" stroke-width="2.2"/><line x1="24.5" y1="4.6" x2="24.5" y2="15.4" stroke="#2a1c08" stroke-width="2.2"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2a1c08" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
           </span>
           <span>explore the map</span>
           <span class="cta-arrow" aria-hidden="true">→</span>
@@ -178,7 +178,7 @@
     <!-- VIEW: map -->
     <section id="view-map" class="view">
       <div class="screen-nav">
-        <img src="logo.svg?v=23" alt="recapsule home" class="screen-logo-sm" data-goto-home />
+        <img src="logo.svg?v=25" alt="recapsule home" class="screen-logo-sm" data-goto-home />
       </div>
       <div class="map-head">
         <p class="map-title-green">map</p>
@@ -197,7 +197,7 @@
     <!-- VIEW: principle graph -->
     <section id="view-graph" class="view">
       <div class="screen-nav">
-        <img src="logo.svg?v=23" alt="recapsule home" class="screen-logo-sm" data-goto-home />
+        <img src="logo.svg?v=25" alt="recapsule home" class="screen-logo-sm" data-goto-home />
         <svg class="compass-rose-sm" viewBox="0 0 50 50" width="40" height="40">
           <circle cx="25" cy="25" r="22" fill="none" stroke="#4a7ab0" stroke-width="2"/>
           <text x="25" y="12" text-anchor="middle" font-family="'Caveat',cursive" font-size="10" fill="#2a1c10">N</text>
@@ -211,13 +211,9 @@
       </div>
       <div class="principles-header">
         <p class="principles-title">Principles</p>
-        <p class="principles-subtitle">Map</p>
+        <p class="principles-subtitle">what your moments keep showing</p>
       </div>
-      <div id="graph" class="graph-canvas principles-canvas">
-        <svg id="graph-edges" class="graph-edges" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
-        <div id="graph-nodes" class="graph-nodes"></div>
-      </div>
-      <p class="map-info" id="graph-info">Tap a principle to see the moments behind it. Tap a memory to open it.</p>
+      <div id="graph" class="prin-list"></div>
     </section>
 
     <!-- VIEW: capsules list -->
@@ -277,6 +273,7 @@
       <button class="back" data-back-map>← map</button>
       <div id="reveal-meta" class="rmeta"></div>
       <div id="reveal-media" class="rmedia"></div>
+      <div id="reveal-soundtrack" class="rsound"></div>
       <div class="storyline-wrap">
         <p class="section-label">The night, reconstructed</p>
         <p id="storyline" class="storyline"></p>
@@ -348,8 +345,8 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
 
-  <script src="seed.js?v=23"></script>
-  <script src="api.js?v=23"></script>
-  <script src="app.js?v=23"></script>
+  <script src="seed.js?v=25"></script>
+  <script src="api.js?v=25"></script>
+  <script src="app.js?v=25"></script>
 </body>
 </html>

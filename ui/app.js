@@ -29,6 +29,24 @@ const ICON = {
 const escapeHTML = (s) => s.replace(/[&<>"']/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
+// --- REAL YouTube Music history (data/soundtrack.json) ---
+let SOUNDTRACK = {};
+fetch("data/soundtrack.json?v=25").then((r) => (r.ok ? r.json() : {})).then((d) => {
+  SOUNDTRACK = d || {};
+  // if a reveal is already open when the data lands, re-render it with the real soundtrack
+  try { if (active && views.reveal && views.reveal.classList.contains("active")) reveal(); } catch (e) {}
+}).catch(() => {});
+function soundtrackFor(cap) {
+  const day = cap && cap.day, clock = cap && cap.clock;
+  if (!day || !clock || !SOUNDTRACK[day]) return null;
+  const toMin = (s) => { const [h, m] = s.split(":").map(Number); return h * 60 + m; };
+  const target = toMin(clock);
+  const plays = SOUNDTRACK[day];
+  const now = plays.slice().sort((a, b) => Math.abs(toMin(a.t) - target) - Math.abs(toMin(b.t) - target))[0];
+  const around = plays.filter((p) => Math.abs(toMin(p.t) - target) <= 90).sort((a, b) => toMin(a.t) - toMin(b.t)).slice(0, 5);
+  return { now, around: around.length ? around : [now] };
+}
+
 // --- sound (synthesized, no asset files; runs on user gesture) ---
 const SoundFX = (() => {
   let ctx;
@@ -126,6 +144,7 @@ function show(name) {
     t.classList.toggle("active", TAB_FOR_VIEW[name] === t.dataset.tab));
   document.querySelector(".screen").scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   if (name === 'map') renderMap();
+  if (name === 'graph') renderGraph();
 }
 const switchTab = (tab) => show(tab === "capsules" ? "places" : tab);
 
@@ -160,15 +179,17 @@ function ensureMap() {
   if (map || typeof L === "undefined") return;
   const c = document.getElementById("map");
   if (!c || !c.offsetWidth) return; // wait until the map view is visible & sized
-  // fully static: no drag, no zoom, no auto-movement
+  // user can pinch/scroll/drag to zoom; NO auto-movement (no drift)
   map = L.map("map", {
-    zoomControl: false, attributionControl: false,
-    dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
-    boxZoom: false, keyboard: false, touchZoom: false, tap: false,
+    zoomControl: true, attributionControl: false,
+    dragging: true, scrollWheelZoom: true, doubleClickZoom: true, touchZoom: true,
+    boxZoom: false, keyboard: false, minZoom: 14, maxZoom: 18, zoomSnap: 0.5,
   });
   L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19 }).addTo(map);
   const pts = SEED.map.filter((m) => m.lat != null).map((m) => [m.lat, m.lng]);
-  map.fitBounds(L.latLngBounds(pts), { padding: [48, 48], maxZoom: 16 });
+  const bounds = L.latLngBounds(pts);
+  map.fitBounds(bounds, { padding: [44, 44], maxZoom: 16.5 });
+  map.setMaxBounds(bounds.pad(0.8)); // keep the view near the capsules
 }
 
 function renderMap() {
@@ -450,12 +471,26 @@ function reveal() {
 
   const poi = SEED.map.find((m) => m.capsuleId === active.id);
   const coords = poi ? `${poi.lat.toFixed(5)}, ${poi.lng.toFixed(5)}` : "";
+  const st = soundtrackFor(active);
+  const musicLabel = st ? `${st.now.artist} · ${st.now.track}` : active.music;
   document.getElementById("reveal-meta").innerHTML = `
     <span class="rm-place">${ICON.pin}${active.anchor.place}</span>
     ${coords ? `<span class="rm-coord">${coords}</span>` : ""}
     <span class="rm-time">${active.anchor.time}</span>
     <span class="rm-mood" style="--h:${active.mood.hue}">${active.mood.label} · read by recapsule</span>
-    ${active.music ? `<span class="rm-music">♪ ${active.music}</span>` : ""}`;
+    ${musicLabel ? `<span class="rm-music">♪ ${escapeHTML(musicLabel)}</span>` : ""}`;
+
+  const sEl = document.getElementById("reveal-soundtrack");
+  if (sEl) {
+    if (st) {
+      sEl.style.display = "";
+      sEl.innerHTML = `<div class="rsound-head">what you were playing</div>` +
+        st.around.map((p) => `<a class="rsound-row${p.t === st.now.t ? " now" : ""}" href="${p.url || "#"}" target="_blank" rel="noopener">
+          <span class="rsound-t">${p.t}</span>
+          <span class="rsound-main"><span class="rsound-track">${escapeHTML(p.track)}</span><span class="rsound-artist">${escapeHTML(p.artist)}</span></span>
+          <span class="rsound-yt">▸</span></a>`).join("");
+    } else { sEl.style.display = "none"; sEl.innerHTML = ""; }
+  }
 
   const media = active.media && active.media.length
     ? active.media
@@ -578,48 +613,31 @@ function layoutGraph(nodes, edges, byId) {
   nodes.forEach((n) => { n.x = Math.max(14, Math.min(86, n.x)); n.y = Math.max(13, Math.min(87, n.y)); });
 }
 
+// legible principle cards: the belief + the moments that formed it + relations
 function renderGraph() {
-  if (!graphNodes.length) buildGraph();
-  const byId = {}; graphNodes.forEach((n) => (byId[n.id] = n));
-  const svg = document.getElementById("graph-edges");
-  svg.innerHTML = graphEdges.map((e) => {
-    const a = byId[e.a], b = byId[e.b];
-    const lit = graphFocus && (e.a === graphFocus || e.b === graphFocus);
-    return `<line class="${e.type}${lit ? " lit" : ""}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
-  }).join("");
-  svg.classList.toggle("dim", !!graphFocus);
-
-  const wrap = document.getElementById("graph-nodes");
-  wrap.innerHTML = "";
-  graphNodes.forEach((n, i) => {
-    const el = document.createElement("button");
-    el.className = `gnode ${n.kind}`;
-    if (graphFocus) {
-      if (n.id === graphFocus || byId[graphFocus].conn.has(n.id)) el.classList.add("lit");
-      else el.classList.add("dim");
-    }
-    el.style.left = n.x + "%"; el.style.top = n.y + "%";
-    el.style.animationDelay = (-i * 0.7) + "s";
-    const dot = n.kind === "memory" ? `<span class="gdot"></span>` : `<span class="gdot"></span>`;
-    el.innerHTML = `${dot}<span class="glabel">${n.label}</span>`;
-    el.setAttribute("aria-label", n.kind === "memory" ? `Open ${n.label}` : `Principle: ${n.text}`);
-    el.addEventListener("click", (ev) => { ev.stopPropagation(); onGraphNode(n); });
-    wrap.appendChild(el);
+  const list = document.getElementById("graph");
+  if (!list) return;
+  list.innerHTML = "";
+  SEED.principles.forEach((p) => {
+    const rels = SEED.principleEdges
+      .filter((e) => e.a === p.id || e.b === p.id)
+      .map((e) => {
+        const o = SEED.principles.find((x) => x.id === (e.a === p.id ? e.b : e.a));
+        if (!o) return "";
+        return `<span class="prin-rel ${e.type}">${e.type === "align" ? "goes with" : "tension with"} “${o.label}”</span>`;
+      }).join("");
+    const mems = p.capsules.map((cid) => getPlace(cid)).filter(Boolean)
+      .map((c) => `<button class="prin-mem" data-id="${c.id}"><span class="prin-mem-thumb" style="background:${c.cover}"></span>${c.name}</button>`).join("");
+    const card = document.createElement("div");
+    card.className = "prin-card";
+    card.innerHTML = `<p class="prin-statement">“${p.text}”</p>
+      ${rels ? `<div class="prin-rels">${rels}</div>` : ""}
+      <div class="prin-from"><span class="prin-from-label">drawn from</span><div class="prin-mems">${mems}</div></div>`;
+    list.appendChild(card);
   });
+  list.querySelectorAll(".prin-mem").forEach((b) =>
+    b.addEventListener("click", () => { const c = getPlace(b.dataset.id); if (c) openCapsule(c); }));
 }
-
-function onGraphNode(n) {
-  if (n.kind === "memory") { openCapsule(getPlace(n.id)); return; }
-  graphFocus = (graphFocus === n.id) ? null : n.id;
-  SoundFX.shimmer();
-  renderGraph();
-  document.getElementById("graph-info").textContent = graphFocus
-    ? `"${n.text}", tap a lit memory to open it.`
-    : "Tap a principle to see the moments behind it. Tap a memory to open it.";
-}
-document.getElementById("graph").addEventListener("click", () => {
-  if (graphFocus) { graphFocus = null; renderGraph(); document.getElementById("graph-info").textContent = "Tap a principle to see the moments behind it. Tap a memory to open it."; }
-});
 
 // --- tabs + back nav ---
 document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => switchTab(t.dataset.tab)));
@@ -857,4 +875,3 @@ function splitReveal(el) {
 }
 splitReveal(document.querySelector(".home-headline"));
 
-if(location.search.includes("demo=recon")){openPlace("durant");}

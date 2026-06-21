@@ -1696,18 +1696,16 @@ body {
 .dm-pins { position: absolute; inset: 0; }
 .dpin {
   position: absolute; transform: translate(-50%, -50%);
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  background: none; border: none; cursor: pointer; padding: 4px;
-  animation: pinBob 3.6s ease-in-out infinite var(--d, 0s);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: none; border: none; cursor: pointer; padding: 2px;
 }
-@keyframes pinBob { 0%,100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, calc(-50% - 5px)); } }
 .dpin:active { filter: brightness(.96); }
 .dpin-dot { position: relative; display: grid; place-items: center; }
 .dpin-label {
-  font-family: var(--hand); font-size: 12px; font-weight: 600; color: var(--ink);
-  background: rgba(250,246,238,.82); border: 1.5px solid var(--ink);
-  border-radius: 7px; padding: 1px 7px; white-space: nowrap;
-  box-shadow: 1.5px 2px 0 rgba(42,28,16,.3);
+  font-family: var(--hand); font-size: 10.5px; font-weight: 700; color: var(--ink);
+  background: rgba(250,246,238,.9); border: 1.5px solid var(--ink);
+  border-radius: 6px; padding: 0 5px; white-space: nowrap;
+  box-shadow: 1px 1.5px 0 rgba(42,28,16,.3);
 }
 
 /* capsule (memory) pin — glowing gold canister */
@@ -1804,3 +1802,78 @@ body {
 
 /* Leaflet marker wrapper must not clip the pin */
 .dm-leaf .leaflet-marker-icon, .dpin-marker { overflow: visible; }
+
+/* =========================================================================
+   PRINCIPLES — legible cards (belief + the moments behind it)
+   ========================================================================= */
+#view-graph { padding-bottom: 104px; }
+.prin-list { display: flex; flex-direction: column; gap: 16px; }
+.prin-card {
+  background: var(--paper-alt); border: 2.5px solid var(--ink); border-radius: 16px;
+  box-shadow: 4px 5px 0 var(--ink); padding: 16px 16px 14px;
+}
+.prin-statement {
+  font-family: var(--serif); font-size: 19px; line-height: 1.25; color: var(--ink);
+}
+.prin-rels { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.prin-rel {
+  font-family: var(--hand); font-size: 11.5px; font-weight: 600;
+  border-radius: 999px; padding: 3px 9px; border: 1.5px solid;
+}
+.prin-rel.align { color: var(--green); border-color: var(--green); background: rgba(74,114,48,.1); }
+.prin-rel.contradict { color: var(--red-x); border-color: var(--red-x); background: rgba(200,64,48,.1); }
+.prin-from { margin-top: 12px; }
+.prin-from-label {
+  font-family: var(--hand); font-size: 11.5px; font-weight: 600; color: var(--ink-soft);
+  text-transform: lowercase; display: block; margin-bottom: 7px;
+}
+.prin-mems { display: flex; flex-wrap: wrap; gap: 8px; }
+.prin-mem {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--hand); font-size: 13px; font-weight: 600; color: var(--ink);
+  background: var(--paper); border: 2px solid var(--ink); border-radius: 999px;
+  padding: 4px 11px 4px 5px; cursor: pointer; box-shadow: 1.5px 2px 0 rgba(42,28,16,.28);
+  transition: transform .12s var(--easing);
+}
+.prin-mem:active { transform: translate(1px, 2px); box-shadow: none; }
+.prin-mem-thumb { width: 22px; height: 22px; border-radius: 50%; background-size: cover; background-position: center; border: 1.5px solid var(--ink); flex-shrink: 0; }
+
+/* =========================================================================
+   REAL SOUNDTRACK (YouTube Music history) on the reveal screen
+   ========================================================================= */
+.rsound {
+  margin: 14px 0 4px; background: var(--paper-alt);
+  border: 2.5px solid var(--ink); border-radius: 16px;
+  box-shadow: 4px 5px 0 var(--ink); padding: 12px 14px; overflow: hidden;
+}
+.rsound-head {
+  font-family: var(--hand); font-size: 13px; font-weight: 700; color: var(--ink-mid);
+  margin-bottom: 8px;
+}
+.rsound-row {
+  display: flex; align-items: center; gap: 11px; padding: 7px 8px;
+  border-radius: 10px; text-decoration: none; color: var(--ink);
+  transition: background .12s var(--easing);
+}
+.rsound-row + .rsound-row { border-top: 1.5px solid rgba(122,96,80,.18); }
+.rsound-row.now { background: var(--gold-light, rgba(200,144,42,.18)); }
+.rsound-row:active { background: rgba(200,144,42,.14); }
+.rsound-t { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); flex-shrink: 0; width: 38px; }
+.rsound-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.rsound-track { font-family: var(--hand); font-size: 15px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rsound-artist { font-family: var(--hand); font-size: 12.5px; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rsound-yt { color: var(--gold); font-size: 14px; flex-shrink: 0; }
+.rsound-row.now .rsound-yt { color: var(--red-x, #c84030); }
+
+/* Leaflet zoom controls — on-brand */
+.leaflet-control-zoom { border: none !important; margin: 10px !important; box-shadow: none !important; }
+.leaflet-control-zoom a {
+  width: 34px !important; height: 34px !important; line-height: 32px !important;
+  font-size: 20px !important; color: var(--ink) !important;
+  background: var(--paper) !important; border: 2px solid var(--ink) !important;
+  box-shadow: 1.5px 2px 0 rgba(42,28,16,.4) !important;
+  font-family: var(--serif) !important;
+}
+.leaflet-control-zoom a:first-child { border-radius: 10px 10px 0 0 !important; }
+.leaflet-control-zoom a:last-child { border-radius: 0 0 10px 10px !important; border-top: none !important; }
+.leaflet-control-zoom a:hover { background: var(--gold-light, #f0d98a) !important; }
