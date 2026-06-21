@@ -16,15 +16,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-
-  <link rel="stylesheet" href="styles.css?v=22" />
+  <link rel="stylesheet" href="styles.css?v=23" />
 </head>
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
     <filter id="lw" x="-8%" y="-8%" width="116%" height="116%">
       <feTurbulence type="fractalNoise" baseFrequency="0.018 0.02" numOctaves="2" seed="6" result="n"/>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="3.4" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="posterize" color-interpolation-filters="sRGB">
+      <feComponentTransfer>
+        <feFuncR type="discrete" tableValues="0 .25 .5 .72 .92"/>
+        <feFuncG type="discrete" tableValues="0 .25 .5 .72 .92"/>
+        <feFuncB type="discrete" tableValues="0 .25 .5 .72 .92"/>
+      </feComponentTransfer>
     </filter>
   </defs></svg>
 
@@ -45,7 +53,7 @@
     <!-- VIEW: home -->
     <section id="view-home" class="view active">
       <div class="home-topbar">
-        <img src="logo.svg?v=22" alt="recapsule" class="home-logo" id="logo-home" />
+        <img src="logo.svg?v=23" alt="recapsule" class="home-logo" id="logo-home" />
         <span class="home-brand">recapsule</span>
       </div>
       <div class="home-hero">
@@ -170,31 +178,16 @@
     <!-- VIEW: map -->
     <section id="view-map" class="view">
       <div class="screen-nav">
-        <img src="logo.svg?v=22" alt="recapsule home" class="screen-logo-sm" data-goto-home />
+        <img src="logo.svg?v=23" alt="recapsule home" class="screen-logo-sm" data-goto-home />
       </div>
       <div class="map-head">
         <p class="map-title-green">map</p>
         <span id="map-progress" class="map-progress"></span>
       </div>
 
-      <div id="map" class="draw-map">
-        <svg class="dm-bg" viewBox="0 0 360 380" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-          <rect width="360" height="380" fill="#d8e3bc"/>
-          <path d="M0 250 Q90 230 180 248 Q270 266 360 240 L360 380 L0 380 Z" fill="#c7d6a2"/>
-          <path d="M0 120 Q120 100 200 124 Q300 154 360 118 L360 250 Q270 266 180 248 Q90 230 0 250 Z" fill="#cfdcaa"/>
-          <path d="M-20 300 Q120 250 200 300 Q300 360 380 300" fill="none" stroke="#cdb98a" stroke-width="16" stroke-linecap="round" opacity=".8"/>
-          <path d="M-20 300 Q120 250 200 300 Q300 360 380 300" fill="none" stroke="#b89a64" stroke-width="16" stroke-dasharray="2 16" stroke-linecap="round" opacity=".5"/>
-          <ellipse cx="286" cy="150" rx="46" ry="30" fill="#a9cfe0" stroke="#2a1c08" stroke-width="2" opacity=".85"/>
-          <ellipse cx="286" cy="150" rx="30" ry="18" fill="#bfe0ee" opacity=".7"/>
-          <g stroke="#2a1c08" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <g fill="#6f9a4a"><circle cx="60" cy="96" r="15"/><path d="M60 111 v16" stroke="#7a5a30"/></g>
-            <g fill="#5f8c3e"><circle cx="120" cy="320" r="13"/><path d="M120 333 v14" stroke="#7a5a30"/></g>
-            <g fill="#6f9a4a"><circle cx="318" cy="300" r="14"/><path d="M318 314 v15" stroke="#7a5a30"/></g>
-            <g fill="#5f8c3e"><circle cx="44" cy="210" r="12"/><path d="M44 222 v13" stroke="#7a5a30"/></g>
-          </g>
-        </svg>
-        <div class="dm-clouds" aria-hidden="true"><span class="dm-cloud c1"></span><span class="dm-cloud c2"></span><span class="dm-cloud c3"></span></div>
-        <div id="map-pins" class="dm-pins"></div>
+      <div class="draw-map">
+        <div id="map" class="dm-leaf"></div>
+        <div class="dm-paper" aria-hidden="true"></div>
       </div>
 
       <p id="map-info" class="map-info">Tap a glowing capsule to open it. Tap a faded pin to discover that spot.</p>
@@ -204,7 +197,7 @@
     <!-- VIEW: principle graph -->
     <section id="view-graph" class="view">
       <div class="screen-nav">
-        <img src="logo.svg?v=22" alt="recapsule home" class="screen-logo-sm" data-goto-home />
+        <img src="logo.svg?v=23" alt="recapsule home" class="screen-logo-sm" data-goto-home />
         <svg class="compass-rose-sm" viewBox="0 0 50 50" width="40" height="40">
           <circle cx="25" cy="25" r="22" fill="none" stroke="#4a7ab0" stroke-width="2"/>
           <text x="25" y="12" text-anchor="middle" font-family="'Caveat',cursive" font-size="10" fill="#2a1c10">N</text>
@@ -355,8 +348,8 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
 
-  <script src="seed.js?v=22"></script>
-  <script src="api.js?v=22"></script>
-  <script src="app.js?v=22"></script>
+  <script src="seed.js?v=23"></script>
+  <script src="api.js?v=23"></script>
+  <script src="app.js?v=23"></script>
 </body>
 </html>

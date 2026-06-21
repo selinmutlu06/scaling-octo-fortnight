@@ -1780,3 +1780,27 @@ body {
   .home-headline .word { opacity: 1; transform: none; animation: none; }
   .cta-primary::after { animation: none; display: none; }
 }
+
+/* =========================================================================
+   SATELLITE-BUT-DRAWN MAP (Leaflet + Esri, posterized to look painted)
+   ========================================================================= */
+.draw-map {
+  position: relative; width: 100%; aspect-ratio: 1 / 1.04;
+  border: 3px solid var(--ink); border-radius: 20px; overflow: hidden;
+  box-shadow: 5px 6px 0 var(--ink); background: #c9d6b0;
+}
+.dm-leaf { position: absolute; inset: 0; }
+.leaflet-container { background: #c9d6b0; font-family: var(--hand); }
+/* the "drawn" treatment — per-pixel posterize + warm grade (seam-free on tiles) */
+.leaflet-tile { filter: saturate(1.5) contrast(1.04) brightness(1.03) sepia(.16) url(#posterize); }
+/* paper/ink texture over the imagery */
+.dm-paper {
+  position: absolute; inset: 0; pointer-events: none; z-index: 450;
+  box-shadow: inset 0 0 36px 6px rgba(90,60,30,.32);
+  background:
+    radial-gradient(130% 100% at 50% -10%, rgba(250,246,238,.14), transparent 55%);
+  mix-blend-mode: multiply; opacity: .9;
+}
+
+/* Leaflet marker wrapper must not clip the pin */
+.dm-leaf .leaflet-marker-icon, .dpin-marker { overflow: visible; }

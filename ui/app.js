@@ -142,19 +142,9 @@ function toast(msg) {
 }
 
 // --- 1. ILLUSTRATED MAP (hand-drawn, no library, no auto-movement) ---
-let map = null;          // kept null so legacy `if (map)` guards are harmless
-function stopSpin() {}   // no-op (no more auto-drift)
-
-// place pins by % from real lat/lng, framed with padding so nothing clips
-function mapXY(poi) {
-  const pts = SEED.map.filter((m) => m.lat != null);
-  const la = pts.map((p) => p.lat), ln = pts.map((p) => p.lng);
-  const laMin = Math.min(...la), laMax = Math.max(...la), lnMin = Math.min(...ln), lnMax = Math.max(...ln);
-  return {
-    x: 24 + ((poi.lng - lnMin) / ((lnMax - lnMin) || 1)) * 52,
-    y: 18 + ((laMax - poi.lat) / ((laMax - laMin) || 1)) * 60,
-  };
-}
+// --- real Berkeley satellite (Leaflet + Esri), STATIC, drawn-out look ---
+let map = null, markerLayer = null;
+function stopSpin() {}
 
 function capsuleSVG(locked) {
   const fc = locked ? "#d8b24a" : "#f0d98a", ec = locked ? "#b88a28" : "#d4aa3a";
@@ -166,32 +156,41 @@ function capsuleSVG(locked) {
     <rect x="28" y="2.5" width="3.5" height="17" rx="1.5" fill="#c49820" stroke="#2a1c08" stroke-width="1"/></svg>`;
 }
 
+function ensureMap() {
+  if (map || typeof L === "undefined") return;
+  const c = document.getElementById("map");
+  if (!c || !c.offsetWidth) return; // wait until the map view is visible & sized
+  // fully static: no drag, no zoom, no auto-movement
+  map = L.map("map", {
+    zoomControl: false, attributionControl: false,
+    dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
+    boxZoom: false, keyboard: false, touchZoom: false, tap: false,
+  });
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19 }).addTo(map);
+  const pts = SEED.map.filter((m) => m.lat != null).map((m) => [m.lat, m.lng]);
+  map.fitBounds(L.latLngBounds(pts), { padding: [48, 48], maxZoom: 16 });
+}
+
 function renderMap() {
-  const wrap = document.getElementById("map-pins");
-  if (!wrap) return;
-  wrap.innerHTML = "";
+  ensureMap();
+  if (!map) return;
+  map.invalidateSize();
+  if (markerLayer) markerLayer.remove();
+  markerLayer = L.layerGroup().addTo(map);
   let found = 0;
-  SEED.map.forEach((poi, i) => {
+  SEED.map.forEach((poi) => {
     const disc = isDiscovered(poi);
     if (disc) found++;
     const cap = poi.capsuleId ? getPlace(poi.capsuleId) : null;
     const locked = cap && isLocked(cap);
-    const { x, y } = mapXY(poi);
-
-    const el = document.createElement("button");
-    el.className = "dpin" + (disc ? (cap ? (locked ? " cap sealed" : " cap") : " empty") : " fog") + (highlight.has(poi.id) ? " lit" : "");
-    el.style.left = x + "%";
-    el.style.top = y + "%";
-    el.style.setProperty("--d", (i * 0.4).toFixed(2) + "s");
-
+    const cls = (disc ? (cap ? (locked ? "cap sealed" : "cap") : "empty") : "fog") + (highlight.has(poi.id) ? " lit" : "");
     let art;
     if (!disc) art = `<span class="dpin-q">?</span>`;
     else if (cap) art = capsuleSVG(locked) + (locked ? `<span class="dpin-lock">${ICON.lock}</span>` : "");
     else art = `<span class="dpin-plus">+</span>`;
-    el.innerHTML = `<span class="dpin-dot">${art}</span><span class="dpin-label">${poi.name}</span>`;
-
-    el.addEventListener("click", (e) => { e.stopPropagation(); onPoiClick(poi); });
-    wrap.appendChild(el);
+    const html = `<div class="dpin ${cls}"><span class="dpin-dot">${art}</span><span class="dpin-label">${poi.name}</span></div>`;
+    const icon = L.divIcon({ html, className: "dpin-marker", iconSize: [0, 0], iconAnchor: [0, 0] });
+    L.marker([poi.lat, poi.lng], { icon, keyboard: false }).addTo(markerLayer).on("click", () => onPoiClick(poi));
   });
   const mp = document.getElementById("map-progress");
   if (mp) mp.textContent = `${found} of ${SEED.map.length} found`;
